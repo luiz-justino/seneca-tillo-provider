@@ -23,12 +23,10 @@ See [seneca-entity](https://github.com/senecajs/seneca-entity) and the
 Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html)
 for more details on the Seneca entity API.
 
-NOTE: underlying third party SDK needs to be replaced as out of date and has a security issue.
-
 ## Install
 
 ```sh
-npm install @seneca/tillo-provider @seneca/env
+npm install @seneca/tillo-provider @seneca/provider @seneca/env seneca-entity seneca-promisify
 ```
 
 ## Quick Example
@@ -36,7 +34,9 @@ npm install @seneca/tillo-provider @seneca/env
 ```js
 // Setup - get the key value (<SECRET>) separately from a vault or
 // environment variable.
-Seneca()
+const seneca = Seneca({ legacy: false })
+  .use('promisify')
+  .use('entity')
   // Get API keys using the seneca-env plugin
   .use('env', {
     var: {
@@ -56,6 +56,8 @@ Seneca()
   })
   .use('tillo-provider')
 
+await seneca.ready()
+
 const brands = await seneca.entity('provider/tillo/brand').list$({
   detail: true,
   currency: 'GBP',
@@ -72,11 +74,11 @@ it is reached with the normal entity API rather than a bespoke client.
 Request signing and the `Timestamp`/`Signature` headers are handled by
 the plugin.
 
-| Entity                 | Operation | Tillo API                 | Query fields                                                         |
-| ---------------------- | --------- | ------------------------- | -------------------------------------------------------------------- |
-| `provider/tillo/brand` | `list$`   | `GET /brands`             | `detail`, `currency`, `country`                                      |
-| `provider/tillo/float` | `list$`   | `GET /check-floats`       | `currency`                                                           |
-| `provider/tillo/dgc`   | `save$`   | issue a digital gift card | `clientRequestId`, `user_id`, `brand`, `currency`, `value`, `sector` |
+| Entity                 | Operation | Tillo API            | Query fields                                                                                           |
+| ---------------------- | --------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `provider/tillo/brand` | `list$`   | `GET brands`         | `detail`, `currency`, `country`                                                                        |
+| `provider/tillo/float` | `list$`   | `GET check-floats`   | `currency`                                                                                             |
+| `provider/tillo/dgc`   | `save$`   | `POST digital/issue` | `brand`, `value`, `user_id`, `clientRequestId`, `currency` (default `GBP`), `sector` (default `other`) |
 
 ```js
 // Available float balances, one entity per currency.
@@ -104,16 +106,15 @@ If you're using this module and need help, you can:
 
 ## Options
 
-- `debug` : boolean <i><small>false</small></i>
+- `url` : string <i><small>'https://app.tillo.io/'</small></i>
+
+The Tillo API base URL. Include the trailing `/`. Point this at
+`https://sandbox.tillo.dev/api/v2/` to use the sandbox.
 
 Set plugin options when loading with:
 
 ```js
-
-
-seneca.use('TilloProvider', { name: value, ... })
-
-
+seneca.use('tillo-provider', { name: value, ... })
 ```
 
 <small>Note: <code>foo.bar</code> in the list above means
@@ -138,25 +139,25 @@ seneca.use('TilloProvider', { name: value, ... })
 
 ### &laquo; `base:tillo,cmd:list,name:brand,sys:entity,zone:provider` &raquo;
 
-List the available Tillo brands.
+List available gift card brands from Tillo.
 
 ---
 
 ### &laquo; `base:tillo,cmd:list,name:float,sys:entity,zone:provider` &raquo;
 
-List the available float balances, one entity per currency.
+List available float balances per currency.
 
 ---
 
 ### &laquo; `base:tillo,cmd:save,name:dgc,sys:entity,zone:provider` &raquo;
 
-Issue a Tillo digital gift card.
+Issue a new digital gift card via Tillo.
 
 ---
 
 ### &laquo; `sys:provider,get:info,provider:tillo` &raquo;
 
-Get information about the provider.
+Get information about the Tillo provider.
 
 ---
 
@@ -193,9 +194,10 @@ gitignored.
 ## Background
 
 Built on [@seneca/provider](https://github.com/senecajs/seneca-provider),
-which supplies the shared provider conventions: key management, the
-`sys:provider,get:info` message, and the entity builder that turns each
-Tillo resource into a Seneca entity.
+which supplies the shared provider conventions: the keymap that resolves
+API credentials, and the entity builder and HTTP helpers that turn each
+Tillo resource into a Seneca entity. Tillo's HMAC request signing is done
+by this plugin.
 
 Modelling a third party API as entities means the same `list$`/`save$`
 calls, message patterns and debugging tools work here as for any other
