@@ -2,7 +2,7 @@
 
 const Pkg = require('../package.json')
 
-module.exports = {
+export default {
   print: false,
   pattern: 'sys:provider,provider:tillo',
   allow: { missing: true },

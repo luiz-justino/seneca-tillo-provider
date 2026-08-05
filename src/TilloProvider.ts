@@ -8,7 +8,7 @@ import type {
   FloatListParams,
   DgcSaveParams,
   DgcPayload,
-} from './TilloProviderTypes.js'
+} from './types.js'
 
 const Pkg = require('../package.json')
 
