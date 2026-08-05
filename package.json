@@ -58,6 +58,6 @@
     "seneca-entity": ">=28",
     "seneca-msg-test": "^4.1.0",
     "seneca-promisify": ">=3",
-    "typescript": "7.0.2"
+    "typescript": "^7.0.2"
   }
 }
