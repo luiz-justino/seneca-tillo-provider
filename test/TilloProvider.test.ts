@@ -17,12 +17,9 @@ type TilloTestConfig = {
   TILLO_SECRET?: string
 }
 
-type TilloEntity = {
-  entity$: string
-  [key: string]: unknown
-}
-
 const testDir = path.join(__dirname, '..', 'test')
+
+const NO_CREDENTIALS = 'no Tillo credentials in test/local-config.js'
 
 const CONFIG: TilloTestConfig = {}
 
@@ -49,75 +46,73 @@ describe('TilloProvider', () => {
 
   test('float-entity', async () => {
     const seneca = await makeSeneca()
-
-    // Verify the float entity is registered and can be referenced.
-    const floatEntity: TilloEntity = seneca.entity('provider/tillo/float')
-    expect(floatEntity).exist()
-    expect(floatEntity.entity$).to.equal('provider/tillo/float')
+    expectEntityCmd(seneca, 'float', 'list')
   })
 
   test('brand-entity', async () => {
     const seneca = await makeSeneca()
-
-    const brandEntity: TilloEntity = seneca.entity('provider/tillo/brand')
-    expect(brandEntity).exist()
-    expect(brandEntity.entity$).to.equal('provider/tillo/brand')
+    expectEntityCmd(seneca, 'brand', 'list')
   })
 
   test('dgc-entity', async () => {
     const seneca = await makeSeneca()
-
-    const dgcEntity: TilloEntity = seneca.entity('provider/tillo/dgc')
-    expect(dgcEntity).exist()
-    expect(dgcEntity.entity$).to.equal('provider/tillo/dgc')
+    expectEntityCmd(seneca, 'dgc', 'save')
   })
 
-  test('list-float', async () => {
-    if (!CONFIG.TILLO_API_KEY) return
+  test('list-float', async (t) => {
+    if (!CONFIG.TILLO_API_KEY) return t.skip(NO_CREDENTIALS)
     const seneca = await makeSeneca()
 
-    const list: TilloEntity[] = await seneca
-      .entity('provider/tillo/float')
-      .list$({
-        currency: 'GBP',
-      })
+    const list: any[] = await seneca.entity('provider/tillo/float').list$({
+      currency: 'GBP',
+    })
     console.log('FLOATS', list[0])
 
     expect(list.length).to.be.above(0)
   })
 
-  test('list-brand', async () => {
-    if (!CONFIG.TILLO_API_KEY) return
+  test('list-brand', async (t) => {
+    if (!CONFIG.TILLO_API_KEY) return t.skip(NO_CREDENTIALS)
     const seneca = await makeSeneca()
 
-    const list: TilloEntity[] = await seneca
-      .entity('provider/tillo/brand')
-      .list$({
-        detail: true,
-        currency: 'GBP',
-        country: 'GB',
-      })
+    const list: any[] = await seneca.entity('provider/tillo/brand').list$({
+      detail: true,
+      currency: 'GBP',
+      country: 'GB',
+    })
     console.log('BRANDS', list)
 
     expect(list.length).to.be.above(0)
   })
 
-  test('issue-gc', async () => {
-    if (!CONFIG.TILLO_API_KEY) return
+  test('issue-gc', async (t) => {
+    if (!CONFIG.TILLO_API_KEY) return t.skip(NO_CREDENTIALS)
     const seneca = await makeSeneca()
 
-    const redeemTemplate: TilloEntity = await seneca
-      .entity('provider/tillo/dgc')
-      .save$({
-        user_id: 'user01',
-        brand: 'hobbycraft',
-        value: 10.0,
-      })
+    const redeemTemplate = await seneca.entity('provider/tillo/dgc').save$({
+      user_id: 'user01',
+      brand: 'hobbycraft',
+      value: 10.0,
+    })
     console.log('REDEEM TEMPLATE ', redeemTemplate)
 
     expect(redeemTemplate).exist()
   })
 })
+
+function expectEntityCmd(seneca: any, name: string, cmd: string) {
+  const msg = {
+    sys: 'entity',
+    cmd,
+    zone: 'provider',
+    base: 'tillo',
+    name,
+  }
+
+  expect(seneca.find(msg).pattern).to.equal(
+    `base:tillo,cmd:${cmd},name:${name},sys:entity,zone:provider`,
+  )
+}
 
 async function makeSeneca() {
   const seneca = Seneca({ legacy: false })
