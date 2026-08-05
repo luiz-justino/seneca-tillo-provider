@@ -17,11 +17,12 @@
     "url": "git://github.com/senecajs/seneca-tillo-provider.git"
   },
   "scripts": {
-    "prettier": "prettier --write --no-error-on-unmatched-pattern src test",
-    "test": "node --enable-source-maps --test dist-test/TilloProvider.test.js",
-    "test-some": "node --enable-source-maps --test --test-name-pattern",
-    "watch": "tsc -b -w",
-    "build": "tsc -b",
+    "prettier": "prettier --write .",
+    "prettier:file": "prettier --write",
+    "test": "node --enable-source-maps --test \"dist-test/**/*.test.js\"",
+    "test-some": "node --enable-source-maps --test-name-pattern=\"$TEST_PATTERN\" --test \"dist-test/**/*.test.js\"",
+    "watch": "tsc --build src test -w",
+    "build": "tsc --build src test",
     "doc": "echo seneca-doc -p @seneca/provider FIX-broken",
     "clean": "rm -rf node_modules dist dist-test yarn.lock package-lock.json",
     "reset": "npm run clean && npm i && npm run build && npm test",
@@ -36,9 +37,8 @@
     "LICENSE"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
-  "dependencies": {},
   "peerDependencies": {
     "@seneca/env": ">=0.2",
     "@seneca/provider": ">=3",
@@ -52,12 +52,12 @@
     "@seneca/env": ">=0.5",
     "@seneca/maintain": "^0.1.0",
     "@seneca/provider": ">=3",
-    "@types/node": "^25.4.0",
-    "prettier": "^3.8.1",
+    "@types/node": "^26.1.2",
+    "prettier": "3.9.6",
     "seneca": ">=3",
     "seneca-entity": ">=28",
     "seneca-msg-test": "^4.1.0",
     "seneca-promisify": ">=3",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }

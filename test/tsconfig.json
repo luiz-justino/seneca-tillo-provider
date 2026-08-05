@@ -1,18 +1,19 @@
 {
+  "references": [{ "path": "../src" }],
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
     "module": "nodenext",
-    "moduleResolution": "nodenext",
     "noEmitOnError": true,
     "outDir": "../dist-test",
+    "rootDir": ".",
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2022"
-  },
-  "references": [{ "path": "../src" }],
-  "include": ["./**/*.ts"]
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "types": ["node"],
+    "target": "ES2022",
+    "composite": true
+  }
 }
