@@ -8,7 +8,7 @@ import type {
   FloatListParams,
   DgcSaveParams,
   DgcPayload,
-} from './types.js'
+} from './types'
 
 const Pkg = require('../package.json')
 
