@@ -1,16 +1,8 @@
-![Seneca Tillo-Provider](http://senecajs.org/files/assets/seneca-logo.png)
+![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
 
-> _Seneca Tillo-Provider_ is a plugin for [Seneca](http://senecajs.org)
+> A [Seneca.js](http://senecajs.org) plugin
 
-Provides access to the Tillo API using the Seneca _provider_
-convention. Tillo API entities are represented as Seneca entities so
-that they can be accessed using the Seneca entity API and messages.
-
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
-Entities
-Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
-
-NOTE: underlying third party SDK needs to be replaced as out of date and has a security issue.
+# @seneca/tillo-provider
 
 [![npm version](https://img.shields.io/npm/v/@seneca/tillo-provider.svg)](https://npmjs.com/package/@seneca/tillo-provider)
 [![build](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml)
@@ -21,6 +13,23 @@ NOTE: underlying third party SDK needs to be replaced as out of date and has a s
 
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
 | ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
+
+Provides access to the Tillo API using the Seneca _provider_
+convention. Tillo API entities are represented as Seneca entities so
+that they can be accessed using the Seneca entity API and messages.
+
+See [seneca-entity](https://github.com/senecajs/seneca-entity) and the
+[Seneca Data Entities
+Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html)
+for more details on the Seneca entity API.
+
+NOTE: underlying third party SDK needs to be replaced as out of date and has a security issue.
+
+## Install
+
+```sh
+npm install @seneca/tillo-provider @seneca/env
+```
 
 ## Quick Example
 
@@ -56,11 +65,40 @@ const brands = await seneca.entity('provider/tillo/brand').list$({
 console.log('BRANDS', brands)
 ```
 
-## Install
+## Entities
 
-```sh
-$ npm install @seneca/tillo-provider @seneca/env
+Each Tillo resource is a Seneca entity in the `provider/tillo` zone, so
+it is reached with the normal entity API rather than a bespoke client.
+Request signing and the `Timestamp`/`Signature` headers are handled by
+the plugin.
+
+| Entity                 | Operation | Tillo API                 | Query fields                                                         |
+| ---------------------- | --------- | ------------------------- | -------------------------------------------------------------------- |
+| `provider/tillo/brand` | `list$`   | `GET /brands`             | `detail`, `currency`, `country`                                      |
+| `provider/tillo/float` | `list$`   | `GET /check-floats`       | `currency`                                                           |
+| `provider/tillo/dgc`   | `save$`   | issue a digital gift card | `clientRequestId`, `user_id`, `brand`, `currency`, `value`, `sector` |
+
+```js
+// Available float balances, one entity per currency.
+const floats = await seneca.entity('provider/tillo/float').list$({
+  currency: 'GBP',
+})
+
+// Issue a digital gift card.
+const card = await seneca.entity('provider/tillo/dgc').save$({
+  user_id: 'user01',
+  brand: 'hobbycraft',
+  value: 10.0,
+})
 ```
+
+## Support
+
+If you're using this module and need help, you can:
+
+- Post a [github issue](https://github.com/senecajs/seneca-tillo-provider/issues)
+- Tweet to [@senecajs](http://twitter.com/senecajs)
+- Ask on the [Gitter](https://gitter.im/senecajs/seneca)
 
 <!--START:options-->
 
@@ -87,8 +125,9 @@ seneca.use('TilloProvider', { name: value, ... })
 
 ## Action Patterns
 
-- [role:entity,base:tillo,cmd:load,name:repo,zone:provider](#-roleentitybasetillocmdloadnamerepozoneprovider-)
-- [role:entity,base:tillo,cmd:save,name:repo,zone:provider](#-roleentitybasetillocmdsavenamerepozoneprovider-)
+- [base:tillo,cmd:list,name:brand,sys:entity,zone:provider](#-basetillocmdlistnamebrandsysentityzoneprovider-)
+- [base:tillo,cmd:list,name:float,sys:entity,zone:provider](#-basetillocmdlistnamefloatsysentityzoneprovider-)
+- [base:tillo,cmd:save,name:dgc,sys:entity,zone:provider](#-basetillocmdsavenamedgcsysentityzoneprovider-)
 - [sys:provider,get:info,provider:tillo](#-sysprovidergetinfoprovidertillo-)
 
 <!--END:action-list-->
@@ -97,15 +136,21 @@ seneca.use('TilloProvider', { name: value, ... })
 
 ## Action Descriptions
 
-### &laquo; `role:entity,base:tillo,cmd:load,name:repo,zone:provider` &raquo;
+### &laquo; `base:tillo,cmd:list,name:brand,sys:entity,zone:provider` &raquo;
 
-Load Tillo repository data into an entity.
+List the available Tillo brands.
 
 ---
 
-### &laquo; `role:entity,base:tillo,cmd:save,name:repo,zone:provider` &raquo;
+### &laquo; `base:tillo,cmd:list,name:float,sys:entity,zone:provider` &raquo;
 
-Update Tillo repository data from an entity.
+List the available float balances, one entity per currency.
+
+---
+
+### &laquo; `base:tillo,cmd:save,name:dgc,sys:entity,zone:provider` &raquo;
+
+Issue a Tillo digital gift card.
 
 ---
 
@@ -116,3 +161,43 @@ Get information about the provider.
 ---
 
 <!--END:action-desc-->
+
+## Contributing
+
+The [Senecajs org](https://github.com/senecajs/) encourages open
+participation. If you feel you can help in any way, be it with
+documentation, examples, extra testing, or new features please get in
+touch.
+
+The plugin is written in TypeScript under `src/` and published from
+`dist/` — run `npm run build` (or `npm run watch`) after changing
+sources, since the tests import the built plugin.
+
+### Running tests
+
+```sh
+npm run test
+```
+
+```sh
+npm run build                        # required before tests see your changes
+TEST_PATTERN=brand-entity npm run test-some
+```
+
+The tests that call the Tillo sandbox are skipped unless credentials are
+present. To run them, copy
+[`test/local-config-template.js`](test/local-config-template.js) to
+`test/local-config.js` and fill in your API key and secret — that file is
+gitignored.
+
+## Background
+
+Built on [@seneca/provider](https://github.com/senecajs/seneca-provider),
+which supplies the shared provider conventions: key management, the
+`sys:provider,get:info` message, and the entity builder that turns each
+Tillo resource into a Seneca entity.
+
+Modelling a third party API as entities means the same `list$`/`save$`
+calls, message patterns and debugging tools work here as for any other
+Seneca data source, so calling code does not need to know that Tillo is
+remote.
