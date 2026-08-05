@@ -117,9 +117,6 @@ Set plugin options when loading with:
 seneca.use('tillo-provider', { name: value, ... })
 ```
 
-<small>Note: <code>foo.bar</code> in the list above means
-<code>{ foo: { bar: ... } }</code></small>
-
 <!--END:options-->
 
 <!--START:action-list-->
