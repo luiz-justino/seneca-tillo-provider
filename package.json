@@ -39,7 +39,6 @@
   "engines": {
     "node": ">=24"
   },
-  "dependencies": {},
   "peerDependencies": {
     "@seneca/env": ">=0.2",
     "@seneca/provider": ">=3",
@@ -53,12 +52,12 @@
     "@seneca/env": ">=0.5",
     "@seneca/maintain": "^0.1.0",
     "@seneca/provider": ">=3",
-    "@types/node": "^24.10.1",
-    "prettier": "^3.8.1",
+    "@types/node": "^26.1.2",
+    "prettier": "^3.9.6",
     "seneca": ">=3",
     "seneca-entity": ">=28",
     "seneca-msg-test": "^4.1.0",
     "seneca-promisify": ">=3",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
