@@ -69,6 +69,34 @@ See [test/](test/) for more usage examples.
 
 A [Seneca.js](http://senecajs.org) plugin.
 
+
+## Entities
+
+Each Tillo resource is a Seneca entity in the `provider/tillo` zone, so
+it is reached with the normal entity API rather than a bespoke client.
+Request signing and the `Timestamp`/`Signature` headers are handled by
+the plugin.
+
+| Entity                 | Operation | Tillo API            | Query fields                                                                                           |
+| ---------------------- | --------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `provider/tillo/brand` | `list$`   | `GET brands`         | `detail`, `currency`, `country`                                                                        |
+| `provider/tillo/float` | `list$`   | `GET check-floats`   | `currency`                                                                                             |
+| `provider/tillo/dgc`   | `save$`   | `POST digital/issue` | `brand`, `value`, `user_id`, `clientRequestId`, `currency` (default `GBP`), `sector` (default `other`) |
+
+```js
+// Available float balances, one entity per currency.
+const floats = await seneca.entity('provider/tillo/float').list$({
+  currency: 'GBP',
+})
+
+// Issue a digital gift card.
+const card = await seneca.entity('provider/tillo/dgc').save$({
+  user_id: 'user01',
+  brand: 'hobbycraft',
+  value: 10.0,
+})
+```
+
 ## Support
 
 If you're using this module and need help, you can:
