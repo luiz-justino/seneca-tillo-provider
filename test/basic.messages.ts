@@ -2,9 +2,9 @@
 
 const Pkg = require('../package.json')
 
-module.exports = {
+export default {
   print: false,
-  pattern: 'sys:provider,provider:tangocard',
+  pattern: 'sys:provider,provider:tillo',
   allow: { missing: true },
 
   calls: [
@@ -12,9 +12,9 @@ module.exports = {
       pattern: 'get:info',
       out: {
         ok: true,
-        name: 'tangocard',
+        name: 'tillo',
         version: Pkg.version,
       },
-    }
-  ]
+    },
+  ],
 }

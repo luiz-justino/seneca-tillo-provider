@@ -1,0 +1,19 @@
+{
+  "references": [{ "path": "../src" }],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "nodenext",
+    "noEmitOnError": true,
+    "outDir": "../dist-test",
+    "rootDir": ".",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "types": ["node"],
+    "target": "ES2022",
+    "composite": true
+  }
+}
