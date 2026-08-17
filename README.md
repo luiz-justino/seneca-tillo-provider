@@ -7,10 +7,15 @@
 [![build](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml)
 [![Coverage Status](https://coveralls.io/repos/github/senecajs/seneca-tillo-provider/badge.svg?branch=main)](https://coveralls.io/github/senecajs/seneca-tillo-provider?branch=main)
 [![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-tillo-provider/badge.svg)](https://snyk.io/test/github/senecajs/seneca-tillo-provider)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f76e83896b731bb5d609/maintainability)](https://codeclimate.com/github/senecajs/seneca-tillo-provider/maintainability)
 
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
 |---|---|
+
+Provides access to the Tillo API using the Seneca _provider_
+
+convention. Tillo API entities are represented as Seneca entities so
+
+that they can be accessed using the Seneca entity API and messages.
 
 ## Install
 
