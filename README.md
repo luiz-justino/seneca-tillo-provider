@@ -1,5 +1,4 @@
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
-
 > A [Seneca.js](http://senecajs.org) plugin
 
 # @seneca/tillo-provider
@@ -8,20 +7,10 @@
 [![build](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-tillo-provider/actions/workflows/build.yml)
 [![Coverage Status](https://coveralls.io/repos/github/senecajs/seneca-tillo-provider/badge.svg?branch=main)](https://coveralls.io/github/senecajs/seneca-tillo-provider?branch=main)
 [![Known Vulnerabilities](https://snyk.io/test/github/senecajs/seneca-tillo-provider/badge.svg)](https://snyk.io/test/github/senecajs/seneca-tillo-provider)
-[![DeepScan grade](https://deepscan.io/api/teams/5016/projects/19462/branches/505954/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=19462&bid=505954)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f76e83896b731bb5d609/maintainability)](https://codeclimate.com/github/senecajs/seneca-tillo-provider/maintainability)
 
 | ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
-
-Provides access to the Tillo API using the Seneca _provider_
-convention. Tillo API entities are represented as Seneca entities so
-that they can be accessed using the Seneca entity API and messages.
-
-See [seneca-entity](https://github.com/senecajs/seneca-entity) and the
-[Seneca Data Entities
-Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html)
-for more details on the Seneca entity API.
+|---|---|
 
 ## Install
 
@@ -67,32 +56,13 @@ const brands = await seneca.entity('provider/tillo/brand').list$({
 console.log('BRANDS', brands)
 ```
 
-## Entities
+## More Examples
 
-Each Tillo resource is a Seneca entity in the `provider/tillo` zone, so
-it is reached with the normal entity API rather than a bespoke client.
-Request signing and the `Timestamp`/`Signature` headers are handled by
-the plugin.
+See [test/](test/) for more usage examples.
 
-| Entity                 | Operation | Tillo API            | Query fields                                                                                           |
-| ---------------------- | --------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
-| `provider/tillo/brand` | `list$`   | `GET brands`         | `detail`, `currency`, `country`                                                                        |
-| `provider/tillo/float` | `list$`   | `GET check-floats`   | `currency`                                                                                             |
-| `provider/tillo/dgc`   | `save$`   | `POST digital/issue` | `brand`, `value`, `user_id`, `clientRequestId`, `currency` (default `GBP`), `sector` (default `other`) |
+## Motivation
 
-```js
-// Available float balances, one entity per currency.
-const floats = await seneca.entity('provider/tillo/float').list$({
-  currency: 'GBP',
-})
-
-// Issue a digital gift card.
-const card = await seneca.entity('provider/tillo/dgc').save$({
-  user_id: 'user01',
-  brand: 'hobbycraft',
-  value: 10.0,
-})
-```
+A [Seneca.js](http://senecajs.org) plugin.
 
 ## Support
 
@@ -102,9 +72,9 @@ If you're using this module and need help, you can:
 - Tweet to [@senecajs](http://twitter.com/senecajs)
 - Ask on the [Gitter](https://gitter.im/senecajs/seneca)
 
-<!--START:options-->
+## API
 
-## Options
+### Options
 
 - `url` : string <i><small>'https://app.tillo.io/'</small></i>
 
@@ -117,22 +87,14 @@ Set plugin options when loading with:
 seneca.use('tillo-provider', { name: value, ... })
 ```
 
-<!--END:options-->
-
-<!--START:action-list-->
-
-## Action Patterns
+### Action Patterns
 
 - [base:tillo,cmd:list,name:brand,sys:entity,zone:provider](#-basetillocmdlistnamebrandsysentityzoneprovider-)
 - [base:tillo,cmd:list,name:float,sys:entity,zone:provider](#-basetillocmdlistnamefloatsysentityzoneprovider-)
 - [base:tillo,cmd:save,name:dgc,sys:entity,zone:provider](#-basetillocmdsavenamedgcsysentityzoneprovider-)
 - [sys:provider,get:info,provider:tillo](#-sysprovidergetinfoprovidertillo-)
 
-<!--END:action-list-->
-
-<!--START:action-desc-->
-
-## Action Descriptions
+### Action Descriptions
 
 ### &laquo; `base:tillo,cmd:list,name:brand,sys:entity,zone:provider` &raquo;
 
@@ -158,9 +120,9 @@ Get information about the Tillo provider.
 
 ---
 
-<!--END:action-desc-->
-
 ## Contributing
+
+The [Senecajs org](https://github.com/senecajs/) encourages open participation. If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please get in touch.
 
 The [Senecajs org](https://github.com/senecajs/) encourages open
 participation. If you feel you can help in any way, be it with
