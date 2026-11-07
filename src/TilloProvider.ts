@@ -13,15 +13,10 @@ import type {
 const Pkg = require('../package.json')
 
 function generateAuthSign(signData: Map<string, string>) {
-  const sd = new Map(signData)
-  sd.delete('apiSecret')
-  const sdList: string[] = []
-
-  sd.forEach((v: string) => {
-    sdList.push(v)
-  })
-
-  return sdList.join('-')
+  return [...signData]
+    .filter(([k]) => k !== 'apiSecret')
+    .map(([, v]) => v)
+    .join('-')
 }
 
 function getAuthSignature(signData: Map<string, string>) {
@@ -89,6 +84,9 @@ function TilloProvider(this: any, options: TilloProviderOptions) {
               this.shared.headers.Timestamp = timestamp
 
               const json: Record<string, any> = await getJSON(makeUrl(path, q), makeConfig())
+              if (null == json.data?.brands) {
+                throw this.fail('invalid-response')
+              }
               const brands = json.data.brands
               const list = Object.entries(brands).map(([name, value]: [string, unknown]) =>
                 entize({ name, value }),
@@ -120,6 +118,9 @@ function TilloProvider(this: any, options: TilloProviderOptions) {
               this.shared.headers.Timestamp = timestamp
 
               const json: Record<string, any> = await getJSON(makeUrl(path, q), makeConfig())
+              if (null == json.data?.floats) {
+                throw this.fail('invalid-response')
+              }
               const floats: Record<string, Record<string, unknown>> = json.data.floats
               const list = Object.entries(floats).map(([currency, value]) =>
                 entize({ currency, ...value }),
@@ -142,6 +143,10 @@ function TilloProvider(this: any, options: TilloProviderOptions) {
                 value,
                 sector,
               }: DgcSaveParams = msg.q
+
+              if (null == brand || null == value) {
+                throw this.fail('missing-params')
+              }
 
               const clientRId =
                 clientRequestId ||
@@ -193,7 +198,11 @@ function TilloProvider(this: any, options: TilloProviderOptions) {
   seneca.prepare(async function (this: any) {
     let res = await this.post('sys:provider,get:keymap,provider:tillo')
 
-    if (!res.ok) {
+    if (
+      !res.ok ||
+      null == res.keymap?.apikey ||
+      null == res.keymap?.secret
+    ) {
       throw this.fail('keymap')
     }
 
